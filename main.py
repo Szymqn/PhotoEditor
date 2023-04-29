@@ -15,19 +15,25 @@ class App(QWidget):
         self.width = 640
         self.height = 480
         self.label = None
+        self.upload_button = None
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        upload_button = QPushButton('Upload photo', self)
-        upload_button.setToolTip('This is load photo')
-        upload_button.move(10, 10)
-        upload_button.clicked.connect(self.on_click)
-
         self.label = QLabel(self)
         self.label.move(10, 50)
+
+        self.uploadPhoto()
+
+        self.show()
+
+    def uploadPhoto(self):
+        self.upload_button = QPushButton('Upload photo', self)
+        self.upload_button.setToolTip('This is load photo')
+        self.upload_button.move(10, 10)
+        self.upload_button.clicked.connect(self.on_click)
 
         self.show()
 
@@ -35,11 +41,12 @@ class App(QWidget):
     def on_click(self):
         image = QFileDialog.getOpenFileName(None, 'OpenFile', 'photos', 'Image file(*.jpg)')
         imagePath = image[0]
-        pixmap = QPixmap(imagePath)
-        pixmap = pixmap.scaled(500, 400)
-        self.label.setPixmap(pixmap)
-
-        self.label.adjustSize()
+        if imagePath:
+            pixmap = QPixmap(imagePath)
+            pixmap = pixmap.scaled(500, 400)
+            self.label.setPixmap(pixmap)
+            self.label.adjustSize()
+            self.upload_button.setEnabled(False)
 
 
 if __name__ == '__main__':
