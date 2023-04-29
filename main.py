@@ -1,22 +1,49 @@
 import sys
 
-from PyQt6.QtCore import QSize
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import pyqtSlot
 
 
-class MainWindow(QMainWindow):
+class App(QWidget):
+
     def __init__(self):
         super().__init__()
+        self.title = 'Photo Editor'
+        self.left = 50
+        self.top = 50
+        self.width = 640
+        self.height = 480
+        self.label = None
+        self.initUI()
 
-        self.setWindowTitle("My App")
+    def initUI(self):
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.setFixedSize(QSize(400, 300))
+        upload_button = QPushButton('Upload photo', self)
+        upload_button.setToolTip('This is load photo')
+        upload_button.move(10, 10)
+        upload_button.clicked.connect(self.on_click)
 
+        self.label = QLabel(self)
+        self.label.move(10, 50)
 
-app = QApplication(sys.argv)
+        self.show()
 
-window = MainWindow()
-window.show()
+    @pyqtSlot()
+    def on_click(self):
+        image = QFileDialog.getOpenFileName(None, 'OpenFile', 'photos', 'Image file(*.jpg)')
+        imagePath = image[0]
+        pixmap = QPixmap(imagePath)
+        pixmap = pixmap.scaled(500, 400)
+        self.label.setPixmap(pixmap)
+
+        self.label.adjustSize()
+
 
 if __name__ == '__main__':
-    app.exec()
+    app = QApplication(sys.argv)
+    window = App()
+    window.show()
+    sys.exit(app.exec())
