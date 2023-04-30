@@ -24,7 +24,8 @@ class App(QMainWindow):
         self.upload_button = None
         self.brightness_slider_l = None
         self.brightness_slider_p = None
-        self.darkness_slider = None
+        self.darkness_slider_l = None
+        self.darkness_slider_p = None
         self.negative_checkbox = None
         self.pixmap = None
 
@@ -124,19 +125,35 @@ class App(QMainWindow):
         self.brightness_slider_p.show()
 
     def showDarkness(self):
-        darkness_label = QLabel('Darkness factor', self)
-        darkness_label.show()
-        darkness_label.setGeometry(30, 650, 200, 30)
+        # liner
+        darkness_label_l = QLabel('Darkness factor', self)
+        darkness_label_l.show()
+        darkness_label_l.setGeometry(30, 650, 200, 30)
 
-        self.darkness_slider = QSlider(Qt.Orientation.Horizontal, self)
-        self.darkness_slider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.darkness_slider.setGeometry(30, 700, 200, 30)
-        self.darkness_slider.setMinimum(2)
-        self.darkness_slider.setMaximum(5)
-        self.darkness_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.darkness_slider.setTickInterval(1)
-        self.darkness_slider.valueChanged.connect(self.darkFactor)
-        self.darkness_slider.show()
+        self.darkness_slider_l = QSlider(Qt.Orientation.Horizontal, self)
+        self.darkness_slider_l.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.darkness_slider_l.setGeometry(30, 700, 200, 30)
+        self.darkness_slider_l.setMinimum(2)
+        self.darkness_slider_l.setMaximum(5)
+        self.darkness_slider_l.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.darkness_slider_l.setTickInterval(1)
+        self.darkness_slider_l.valueChanged.connect(self.darkFactorL)
+        self.darkness_slider_l.show()
+
+        # power
+        darkness_label_p = QLabel('Darkness factor', self)
+        darkness_label_p.show()
+        darkness_label_p.setGeometry(350, 650, 200, 30)
+
+        self.darkness_slider_p = QSlider(Qt.Orientation.Horizontal, self)
+        self.darkness_slider_p.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.darkness_slider_p.setGeometry(350, 700, 200, 30)
+        self.darkness_slider_p.setMinimum(2)
+        self.darkness_slider_p.setMaximum(5)
+        self.darkness_slider_p.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.darkness_slider_p.setTickInterval(1)
+        self.darkness_slider_p.valueChanged.connect(self.darkFactorP)
+        self.darkness_slider_p.show()
 
     def showNegative(self):
         self.negative_checkbox = QCheckBox('Negative', self)
@@ -189,7 +206,7 @@ class App(QMainWindow):
         painter.end()
         self.mod_photo.setPixmap(new_pixmap)
 
-    def darkFactor(self):
+    def darkFactorL(self):
         factor = 1 - (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap.size())
         painter = QPainter(new_pixmap)
@@ -199,6 +216,23 @@ class App(QMainWindow):
                 c = self.pixmap.toImage().pixel(i, j)
                 colors = QColor(c).getRgb()
                 new_colors = (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3])
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+        painter.end()
+        self.mod_photo.setPixmap(new_pixmap)
+
+    def darkFactorP(self):
+        factor = 1 - (self.sender().value() * 0.1)
+        n = 0.8
+        new_pixmap = QPixmap(self.pixmap.size())
+        painter = QPainter(new_pixmap)
+
+        for i in range(self.photo_w):
+            for j in range(self.photo_h):
+                c = self.pixmap.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                new_colors = (int(factor * colors[0] ** n), int(factor * colors[1] ** n), int(factor * colors[2] ** n), colors[3])
                 painter.setPen(QColor(*new_colors))
                 painter.drawPoint(i, j)
 
