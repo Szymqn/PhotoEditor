@@ -117,7 +117,12 @@ class App(QMainWindow):
             for j in range(self.photo_h):
                 c = self.pixmap.toImage().pixel(i, j)
                 colors = QColor(c).getRgb()
-                new_colors = (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3])
+                new_colors = list((int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3]))
+
+                new_colors[0] = min(new_colors[0], 255)
+                new_colors[1] = min(new_colors[1], 255)
+                new_colors[2] = min(new_colors[2], 255)
+
                 painter.setPen(QColor(*new_colors))
                 painter.drawPoint(i, j)
 
@@ -125,8 +130,7 @@ class App(QMainWindow):
         self.mod_photo.setPixmap(new_pixmap)
 
     def darkFactor(self):
-        factor = 1 - (self.sender().value() * 0.2)
-        print(factor)
+        factor = 1 - (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap.size())
         painter = QPainter(new_pixmap)
 
