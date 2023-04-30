@@ -1,8 +1,9 @@
 import sys
 
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import pyqtSlot, Qt
+from PyQt6.QtGui import QPixmap, QImage, QColor, QPainter
+from PyQt6.QtCore import pyqtSlot, Qt, QPoint, QSize
+from PIL import Image
 
 
 class App(QMainWindow):
@@ -15,10 +16,14 @@ class App(QMainWindow):
         self.width = 1250
         self.height = 800
 
+        self.photo_w = 500
+        self.photo_h = 400
+
         self.org_photo = None
         self.mod_photo = None
         self.upload_button = None
         self.brightness_slider = None
+        self.pixmap = None
 
         layout = QVBoxLayout()
 
@@ -54,10 +59,10 @@ class App(QMainWindow):
         imagePath = image[0]
         if imagePath:
             pixmap = QPixmap(imagePath)
-            pixmap = pixmap.scaled(500, 400)
-            self.org_photo.setPixmap(pixmap)
+            self.pixmap = pixmap.scaled(self.photo_w, self.photo_h)
+            self.org_photo.setPixmap(self.pixmap)
             self.org_photo.adjustSize()
-            self.mod_photo.setPixmap(pixmap)
+            self.mod_photo.setPixmap(self.pixmap)
             self.mod_photo.adjustSize()
             self.upload_button.setVisible(False)
             self.showBrightness()
@@ -80,7 +85,29 @@ class App(QMainWindow):
         self.brightness_slider = QSlider(Qt.Orientation.Horizontal, self)
         self.brightness_slider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.brightness_slider.setGeometry(30, 500, 200, 30)
+        self.brightness_slider.setMinimum(2)
+        self.brightness_slider.setMaximum(5)
+        self.brightness_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.brightness_slider.setTickInterval(1)
+        self.brightness_slider.valueChanged.connect(self.brightFactor)
         self.brightness_slider.show()
+
+    def brightFactor(self):
+        factor = 1 + (self.sender().value() * 0.1)
+        print(factor)
+        new_pixmap = QPixmap(self.pixmap.size())
+        painter = QPainter(new_pixmap)
+
+        for i in range(self.photo_w):
+            for j in range(self.photo_h):
+                c = self.pixmap.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                new_colors = (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3])
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+        painter.end()
+        self.mod_photo.setPixmap(new_pixmap)
 
 
 if __name__ == '__main__':
