@@ -3,7 +3,6 @@ import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow
 from PyQt6.QtGui import QPixmap, QImage, QColor, QPainter
 from PyQt6.QtCore import pyqtSlot, Qt, QPoint, QSize
-from PIL import Image
 
 
 class App(QMainWindow):
@@ -23,6 +22,7 @@ class App(QMainWindow):
         self.mod_photo = None
         self.upload_button = None
         self.brightness_slider = None
+        self.darkness_slider = None
         self.pixmap = None
 
         layout = QVBoxLayout()
@@ -66,6 +66,7 @@ class App(QMainWindow):
             self.mod_photo.adjustSize()
             self.upload_button.setVisible(False)
             self.showBrightness()
+            self.showDarkness()
             self.photoLabels()
 
     def photoLabels(self):
@@ -92,8 +93,39 @@ class App(QMainWindow):
         self.brightness_slider.valueChanged.connect(self.brightFactor)
         self.brightness_slider.show()
 
+    def showDarkness(self):
+        darkness_label = QLabel('Darkness factor', self)
+        darkness_label.show()
+        darkness_label.setGeometry(30, 550, 200, 30)
+
+        self.darkness_slider = QSlider(Qt.Orientation.Horizontal, self)
+        self.darkness_slider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.darkness_slider.setGeometry(30, 600, 200, 30)
+        self.darkness_slider.setMinimum(2)
+        self.darkness_slider.setMaximum(5)
+        self.darkness_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.darkness_slider.setTickInterval(1)
+        self.darkness_slider.valueChanged.connect(self.darkFactor)
+        self.darkness_slider.show()
+
     def brightFactor(self):
         factor = 1 + (self.sender().value() * 0.1)
+        new_pixmap = QPixmap(self.pixmap.size())
+        painter = QPainter(new_pixmap)
+
+        for i in range(self.photo_w):
+            for j in range(self.photo_h):
+                c = self.pixmap.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                new_colors = (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3])
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+        painter.end()
+        self.mod_photo.setPixmap(new_pixmap)
+
+    def darkFactor(self):
+        factor = 1 - (self.sender().value() * 0.2)
         print(factor)
         new_pixmap = QPixmap(self.pixmap.size())
         painter = QPainter(new_pixmap)
