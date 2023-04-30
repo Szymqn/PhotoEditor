@@ -12,15 +12,15 @@ class App(QMainWindow):
         self.title = 'Photo Editor'
         self.left = 50
         self.top = 50
-        self.width = 640
+        self.width = 1250
         self.height = 800
 
-        self.label = None
+        self.org_photo = None
+        self.mod_photo = None
         self.upload_button = None
         self.brightness_slider = None
 
         layout = QVBoxLayout()
-        layout.addWidget(self.label)
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -32,8 +32,11 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.label = QLabel(self)
-        self.label.move(10, 50)
+        self.org_photo = QLabel(self)
+        self.org_photo.move(10, 50)
+
+        self.mod_photo = QLabel(self)
+        self.mod_photo.move(600, 50)
 
         self.uploadPhoto()
 
@@ -52,8 +55,10 @@ class App(QMainWindow):
         if imagePath:
             pixmap = QPixmap(imagePath)
             pixmap = pixmap.scaled(500, 400)
-            self.label.setPixmap(pixmap)
-            self.label.adjustSize()
+            self.org_photo.setPixmap(pixmap)
+            self.org_photo.adjustSize()
+            self.mod_photo.setPixmap(pixmap)
+            self.mod_photo.adjustSize()
             self.upload_button.setVisible(False)
             self.showBrightness()
 
