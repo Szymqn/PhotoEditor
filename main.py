@@ -1,21 +1,31 @@
 import sys
 
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtCore import pyqtSlot, Qt
 
 
-class App(QWidget):
+class App(QMainWindow):
 
     def __init__(self):
-        super().__init__()
+        super(App, self).__init__()
         self.title = 'Photo Editor'
         self.left = 50
         self.top = 50
         self.width = 640
-        self.height = 480
+        self.height = 800
+
         self.label = None
         self.upload_button = None
+        self.brightness_slider = None
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.label)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+
         self.initUI()
 
     def initUI(self):
@@ -35,8 +45,6 @@ class App(QWidget):
         self.upload_button.move(10, 10)
         self.upload_button.clicked.connect(self.on_click)
 
-        self.show()
-
     @pyqtSlot()
     def on_click(self):
         image = QFileDialog.getOpenFileName(None, 'OpenFile', 'photos', 'Image file(*.jpg)')
@@ -46,7 +54,18 @@ class App(QWidget):
             pixmap = pixmap.scaled(500, 400)
             self.label.setPixmap(pixmap)
             self.label.adjustSize()
-            self.upload_button.setEnabled(False)
+            self.upload_button.setVisible(False)
+            self.showBrightness()
+
+    def showBrightness(self):
+        brightness_label = QLabel('Brightness factor', self)
+        brightness_label.show()
+        brightness_label.setGeometry(30, 450, 200, 30)
+
+        self.brightness_slider = QSlider(Qt.Orientation.Horizontal, self)
+        self.brightness_slider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.brightness_slider.setGeometry(30, 500, 200, 30)
+        self.brightness_slider.show()
 
 
 if __name__ == '__main__':
