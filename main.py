@@ -22,7 +22,8 @@ class App(QMainWindow):
         self.org_photo = None
         self.mod_photo = None
         self.upload_button = None
-        self.brightness_slider = None
+        self.brightness_slider_l = None
+        self.brightness_slider_p = None
         self.darkness_slider = None
         self.negative_checkbox = None
         self.pixmap = None
@@ -92,19 +93,35 @@ class App(QMainWindow):
         desc2_label.setGeometry(350, 475, 200, 30)
 
     def showBrightness(self):
-        brightness_label = QLabel('Brightness factor', self)
-        brightness_label.show()
-        brightness_label.setGeometry(30, 550, 200, 30)
+        # liner
+        brightness_label_l = QLabel('Brightness factor', self)
+        brightness_label_l.show()
+        brightness_label_l.setGeometry(30, 550, 200, 30)
 
-        self.brightness_slider = QSlider(Qt.Orientation.Horizontal, self)
-        self.brightness_slider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.brightness_slider.setGeometry(30, 600, 200, 30)
-        self.brightness_slider.setMinimum(2)
-        self.brightness_slider.setMaximum(5)
-        self.brightness_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.brightness_slider.setTickInterval(1)
-        self.brightness_slider.valueChanged.connect(self.brightFactor)
-        self.brightness_slider.show()
+        self.brightness_slider_l = QSlider(Qt.Orientation.Horizontal, self)
+        self.brightness_slider_l.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.brightness_slider_l.setGeometry(30, 600, 200, 30)
+        self.brightness_slider_l.setMinimum(2)
+        self.brightness_slider_l.setMaximum(5)
+        self.brightness_slider_l.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.brightness_slider_l.setTickInterval(1)
+        self.brightness_slider_l.valueChanged.connect(self.brightFactorL)
+        self.brightness_slider_l.show()
+
+        # power
+        brightness_label_p = QLabel('Brightness factor', self)
+        brightness_label_p.show()
+        brightness_label_p.setGeometry(350, 550, 200, 30)
+
+        self.brightness_slider_p = QSlider(Qt.Orientation.Horizontal, self)
+        self.brightness_slider_p.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.brightness_slider_p.setGeometry(350, 600, 200, 30)
+        self.brightness_slider_p.setMinimum(2)
+        self.brightness_slider_p.setMaximum(5)
+        self.brightness_slider_p.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.brightness_slider_p.setTickInterval(1)
+        self.brightness_slider_p.valueChanged.connect(self.brightFactorP)
+        self.brightness_slider_p.show()
 
     def showDarkness(self):
         darkness_label = QLabel('Darkness factor', self)
@@ -127,7 +144,7 @@ class App(QMainWindow):
         self.negative_checkbox.move(30, 750)
         self.negative_checkbox.show()
 
-    def brightFactor(self):
+    def brightFactorL(self):
         factor = 1 + (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap.size())
         painter = QPainter(new_pixmap)
@@ -138,6 +155,29 @@ class App(QMainWindow):
                 colors = QColor(c).getRgb()
                 new_colors = list(
                     (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3]))
+
+                new_colors[0] = min(new_colors[0], 255)
+                new_colors[1] = min(new_colors[1], 255)
+                new_colors[2] = min(new_colors[2], 255)
+
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+        painter.end()
+        self.mod_photo.setPixmap(new_pixmap)
+
+    def brightFactorP(self):
+        factor = (self.sender().value() / 10)
+        n = 1.33
+        new_pixmap = QPixmap(self.pixmap.size())
+        painter = QPainter(new_pixmap)
+
+        for i in range(self.photo_w):
+            for j in range(self.photo_h):
+                c = self.pixmap.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                new_colors = list(
+                    (int(factor * colors[0] ** n), int(factor * colors[1] ** n), int(factor * colors[2] ** n), colors[3]))
 
                 new_colors[0] = min(new_colors[0], 255)
                 new_colors[1] = min(new_colors[1], 255)
