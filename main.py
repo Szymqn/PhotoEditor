@@ -61,6 +61,16 @@ class App(QMainWindow):
             self.mod_photo.adjustSize()
             self.upload_button.setVisible(False)
             self.showBrightness()
+            self.photoLabels()
+
+    def photoLabels(self):
+        photo1_label = QLabel('Original Photo', self)
+        photo1_label.show()
+        photo1_label.setGeometry(10, 20, 200, 20)
+
+        photo2_label = QLabel('Modify Photo', self)
+        photo2_label.show()
+        photo2_label.setGeometry(600, 20, 200, 20)
 
     def showBrightness(self):
         brightness_label = QLabel('Brightness factor', self)
