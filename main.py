@@ -1,6 +1,7 @@
 import sys
 
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow, \
+    QCheckBox
 from PyQt6.QtGui import QPixmap, QImage, QColor, QPainter
 from PyQt6.QtCore import pyqtSlot, Qt, QPoint, QSize
 
@@ -23,6 +24,7 @@ class App(QMainWindow):
         self.upload_button = None
         self.brightness_slider = None
         self.darkness_slider = None
+        self.negative_checkbox = None
         self.pixmap = None
 
         layout = QVBoxLayout()
@@ -65,9 +67,10 @@ class App(QMainWindow):
             self.mod_photo.setPixmap(self.pixmap)
             self.mod_photo.adjustSize()
             self.upload_button.setVisible(False)
+            self.photoLabels()
             self.showBrightness()
             self.showDarkness()
-            self.photoLabels()
+            self.showNegative()
 
     def photoLabels(self):
         photo1_label = QLabel('Original Photo', self)
@@ -108,6 +111,12 @@ class App(QMainWindow):
         self.darkness_slider.valueChanged.connect(self.darkFactor)
         self.darkness_slider.show()
 
+    def showNegative(self):
+        self.negative_checkbox = QCheckBox('Negative', self)
+        self.negative_checkbox.toggled.connect(self.negative)
+        self.negative_checkbox.move(30, 650)
+        self.negative_checkbox.show()
+
     def brightFactor(self):
         factor = 1 + (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap.size())
@@ -117,7 +126,8 @@ class App(QMainWindow):
             for j in range(self.photo_h):
                 c = self.pixmap.toImage().pixel(i, j)
                 colors = QColor(c).getRgb()
-                new_colors = list((int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3]))
+                new_colors = list(
+                    (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3]))
 
                 new_colors[0] = min(new_colors[0], 255)
                 new_colors[1] = min(new_colors[1], 255)
@@ -139,6 +149,25 @@ class App(QMainWindow):
                 c = self.pixmap.toImage().pixel(i, j)
                 colors = QColor(c).getRgb()
                 new_colors = (int(colors[0] * factor), int(colors[1] * factor), int(colors[2] * factor), colors[3])
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+        painter.end()
+        self.mod_photo.setPixmap(new_pixmap)
+
+    def negative(self):
+
+        new_pixmap = QPixmap(self.pixmap.size())
+        painter = QPainter(new_pixmap)
+
+        for i in range(self.photo_w):
+            for j in range(self.photo_h):
+                c = self.pixmap.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                if self.sender().isChecked():
+                    new_colors = (int(255 - colors[0]), int(255 - colors[1]), int(255 - colors[2]), colors[3])
+                else:
+                    new_colors = (int(colors[0]), int(colors[1]), int(colors[2]), colors[3])
                 painter.setPen(QColor(*new_colors))
                 painter.drawPoint(i, j)
 
