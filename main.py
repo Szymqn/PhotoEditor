@@ -193,13 +193,18 @@ class App(QMainWindow):
 
     def showMixed(self):
         self.additive_checkbox = QCheckBox('Additive', self)
-        self.additive_checkbox.toggled.connect(self.additive)
+        self.additive_checkbox.toggled.connect(self.mixPhoto)
         self.additive_checkbox.move(1200, 50)
         self.additive_checkbox.show()
 
         self.additive_checkbox = QCheckBox('Subtractive', self)
-        self.additive_checkbox.toggled.connect(self.subtractive)
+        self.additive_checkbox.toggled.connect(self.mixPhoto)
         self.additive_checkbox.move(1200, 80)
+        self.additive_checkbox.show()
+
+        self.additive_checkbox = QCheckBox('Difference', self)
+        self.additive_checkbox.toggled.connect(self.mixPhoto)
+        self.additive_checkbox.move(1200, 110)
         self.additive_checkbox.show()
 
     def brightFactorL(self):
@@ -298,7 +303,9 @@ class App(QMainWindow):
         painter.end()
         self.mod_photo.setPixmap(new_pixmap)
 
-    def additive(self):
+    def mixPhoto(self):
+        global new_colors
+
         new_pixmap = QPixmap(self.pixmap1.size())
         painter = QPainter(new_pixmap)
 
@@ -309,27 +316,14 @@ class App(QMainWindow):
                 c2 = self.pixmap2.toImage().pixel(i, j)
                 colors2 = QColor(c2).getRgb()
                 if self.sender().isChecked():
-                    new_colors = (int(min(colors1[0] + colors2[0], 255)), int(min(colors1[1] + colors2[1], 255)), int(min(colors1[2] + colors2[2], 255)), colors1[3])
-                else:
-                    new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
-                painter.setPen(QColor(*new_colors))
-                painter.drawPoint(i, j)
+                    match self.sender().text():
+                        case 'Additive':
+                            new_colors = (int(min(colors1[0] + colors2[0], 255)), int(min(colors1[1] + colors2[1], 255)), int(min(colors1[2] + colors2[2], 255)), colors1[3])
+                        case 'Subtractive':
+                            new_colors = (int(min(colors1[0] + colors2[0] - 1, 255)), int(min(colors1[1] + colors2[1] - 1, 255)), int(min(colors1[2] + colors2[2] - 1, 255)), colors1[3])
+                        case 'Difference':
+                            new_colors = (int(min(abs(colors1[0] - colors2[0]), 255)), int(min(abs(colors1[1] - colors2[1]), 255)), int(min(abs(colors1[2] - colors2[2]), 255)), colors1[3])
 
-        painter.end()
-        self.mod_photo.setPixmap(new_pixmap)
-
-    def subtractive(self):
-        new_pixmap = QPixmap(self.pixmap1.size())
-        painter = QPainter(new_pixmap)
-
-        for i in range(self.photo_w):
-            for j in range(self.photo_h):
-                c1 = self.pixmap1.toImage().pixel(i, j)
-                colors1 = QColor(c1).getRgb()
-                c2 = self.pixmap2.toImage().pixel(i, j)
-                colors2 = QColor(c2).getRgb()
-                if self.sender().isChecked():
-                    new_colors = (int(min(colors1[0] + colors2[0] - 1, 255)), int(min(colors1[1] + colors2[1] - 1, 255)), int(min(colors1[2] + colors2[2] - 1, 255)), colors1[3])
                 else:
                     new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
                 painter.setPen(QColor(*new_colors))
