@@ -87,21 +87,21 @@ class App(QMainWindow):
     def descLabels(self):
         desc1_label = QLabel('Liner methods', self)
         desc1_label.show()
-        desc1_label.setGeometry(30, 475, 200, 30)
+        desc1_label.setGeometry(630, 475, 200, 30)
 
         desc2_label = QLabel('Power methods', self)
         desc2_label.show()
-        desc2_label.setGeometry(350, 475, 200, 30)
+        desc2_label.setGeometry(950, 475, 200, 30)
 
     def showBrightness(self):
         # liner
         brightness_label_l = QLabel('Brightness factor', self)
         brightness_label_l.show()
-        brightness_label_l.setGeometry(30, 550, 200, 30)
+        brightness_label_l.setGeometry(630, 550, 200, 30)
 
         self.brightness_slider_l = QSlider(Qt.Orientation.Horizontal, self)
         self.brightness_slider_l.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.brightness_slider_l.setGeometry(30, 600, 200, 30)
+        self.brightness_slider_l.setGeometry(630, 600, 200, 30)
         self.brightness_slider_l.setMinimum(2)
         self.brightness_slider_l.setMaximum(5)
         self.brightness_slider_l.setTickPosition(QSlider.TickPosition.TicksBelow)
@@ -112,11 +112,11 @@ class App(QMainWindow):
         # power
         brightness_label_p = QLabel('Brightness factor', self)
         brightness_label_p.show()
-        brightness_label_p.setGeometry(350, 550, 200, 30)
+        brightness_label_p.setGeometry(950, 550, 200, 30)
 
         self.brightness_slider_p = QSlider(Qt.Orientation.Horizontal, self)
         self.brightness_slider_p.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.brightness_slider_p.setGeometry(350, 600, 200, 30)
+        self.brightness_slider_p.setGeometry(950, 600, 200, 30)
         self.brightness_slider_p.setMinimum(2)
         self.brightness_slider_p.setMaximum(5)
         self.brightness_slider_p.setTickPosition(QSlider.TickPosition.TicksBelow)
@@ -128,11 +128,11 @@ class App(QMainWindow):
         # liner
         darkness_label_l = QLabel('Darkness factor', self)
         darkness_label_l.show()
-        darkness_label_l.setGeometry(30, 650, 200, 30)
+        darkness_label_l.setGeometry(630, 650, 200, 30)
 
         self.darkness_slider_l = QSlider(Qt.Orientation.Horizontal, self)
         self.darkness_slider_l.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.darkness_slider_l.setGeometry(30, 700, 200, 30)
+        self.darkness_slider_l.setGeometry(630, 700, 200, 30)
         self.darkness_slider_l.setMinimum(2)
         self.darkness_slider_l.setMaximum(5)
         self.darkness_slider_l.setTickPosition(QSlider.TickPosition.TicksBelow)
@@ -143,11 +143,11 @@ class App(QMainWindow):
         # power
         darkness_label_p = QLabel('Darkness factor', self)
         darkness_label_p.show()
-        darkness_label_p.setGeometry(350, 650, 200, 30)
+        darkness_label_p.setGeometry(950, 650, 200, 30)
 
         self.darkness_slider_p = QSlider(Qt.Orientation.Horizontal, self)
         self.darkness_slider_p.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.darkness_slider_p.setGeometry(350, 700, 200, 30)
+        self.darkness_slider_p.setGeometry(950, 700, 200, 30)
         self.darkness_slider_p.setMinimum(2)
         self.darkness_slider_p.setMaximum(5)
         self.darkness_slider_p.setTickPosition(QSlider.TickPosition.TicksBelow)
@@ -158,7 +158,7 @@ class App(QMainWindow):
     def showNegative(self):
         self.negative_checkbox = QCheckBox('Negative', self)
         self.negative_checkbox.toggled.connect(self.negative)
-        self.negative_checkbox.move(30, 750)
+        self.negative_checkbox.move(630, 750)
         self.negative_checkbox.show()
 
     def brightFactorL(self):
