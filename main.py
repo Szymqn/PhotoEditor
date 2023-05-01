@@ -13,15 +13,17 @@ class App(QMainWindow):
         self.title = 'Photo Editor'
         self.left = 50
         self.top = 50
-        self.width = 1250
-        self.height = 800
+        self.width = 1500
+        self.height = 960
 
         self.photo_w = 500
         self.photo_h = 400
 
-        self.org_photo = None
+        self.org_photo1 = None
+        self.org_photo2 = None
         self.mod_photo = None
-        self.upload_button = None
+        self.upload_button1 = None
+        self.upload_button2 = None
         self.brightness_slider_l = None
         self.brightness_slider_p = None
         self.darkness_slider_l = None
@@ -41,8 +43,11 @@ class App(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.org_photo = QLabel(self)
-        self.org_photo.move(10, 50)
+        self.org_photo1 = QLabel(self)
+        self.org_photo1.move(10, 50)
+
+        self.org_photo2 = QLabel(self)
+        self.org_photo2.move(10, 475)
 
         self.mod_photo = QLabel(self)
         self.mod_photo.move(600, 50)
@@ -52,28 +57,44 @@ class App(QMainWindow):
         self.show()
 
     def uploadPhoto(self):
-        self.upload_button = QPushButton('Upload photo', self)
-        self.upload_button.setToolTip('This is load photo')
-        self.upload_button.move(10, 10)
-        self.upload_button.clicked.connect(self.on_click)
+        self.upload_button1 = QPushButton('Upload photo', self)
+        self.upload_button1.setToolTip('This is load photo')
+        self.upload_button1.move(10, 10)
+        self.upload_button1.clicked.connect(self.uploadFirst)
+
+        self.upload_button2 = QPushButton('Upload photo', self)
+        self.upload_button2.setToolTip('This is load photo')
+        self.upload_button2.move(10, 450)
+        self.upload_button2.clicked.connect(self.uploadSecond)
 
     @pyqtSlot()
-    def on_click(self):
+    def uploadFirst(self):
         image = QFileDialog.getOpenFileName(None, 'OpenFile', 'photos', 'Image file(*.jpg)')
         imagePath = image[0]
         if imagePath:
             pixmap = QPixmap(imagePath)
             self.pixmap = pixmap.scaled(self.photo_w, self.photo_h)
-            self.org_photo.setPixmap(self.pixmap)
-            self.org_photo.adjustSize()
+            self.org_photo1.setPixmap(self.pixmap)
+            self.org_photo1.adjustSize()
             self.mod_photo.setPixmap(self.pixmap)
             self.mod_photo.adjustSize()
-            self.upload_button.setVisible(False)
+            self.upload_button1.setVisible(False)
             self.photoLabels()
             self.descLabels()
             self.showBrightness()
             self.showDarkness()
             self.showNegative()
+
+    @pyqtSlot()
+    def uploadSecond(self):
+        image = QFileDialog.getOpenFileName(None, 'OpenFile', 'photos', 'Image file(*.jpg)')
+        imagePath = image[0]
+        if imagePath:
+            pixmap = QPixmap(imagePath)
+            self.pixmap = pixmap.scaled(self.photo_w, self.photo_h)
+            self.org_photo2.setPixmap(self.pixmap)
+            self.org_photo2.adjustSize()
+            self.upload_button2.setVisible(False)
 
     def photoLabels(self):
         photo1_label = QLabel('Original Photo', self)
