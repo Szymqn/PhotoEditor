@@ -30,6 +30,9 @@ class App(QMainWindow):
         self.darkness_slider_p = None
         self.negative_checkbox = None
         self.additive_checkbox = None
+        self.subtractive_checkbox = None
+        self.difference_checkbox = None
+        self.multiply_checkbox = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -197,15 +200,20 @@ class App(QMainWindow):
         self.additive_checkbox.move(1200, 50)
         self.additive_checkbox.show()
 
-        self.additive_checkbox = QCheckBox('Subtractive', self)
-        self.additive_checkbox.toggled.connect(self.mixPhoto)
-        self.additive_checkbox.move(1200, 80)
-        self.additive_checkbox.show()
+        self.subtractive_checkbox = QCheckBox('Subtractive', self)
+        self.subtractive_checkbox.toggled.connect(self.mixPhoto)
+        self.subtractive_checkbox.move(1200, 80)
+        self.subtractive_checkbox.show()
 
-        self.additive_checkbox = QCheckBox('Difference', self)
-        self.additive_checkbox.toggled.connect(self.mixPhoto)
-        self.additive_checkbox.move(1200, 110)
-        self.additive_checkbox.show()
+        self.difference_checkbox = QCheckBox('Difference', self)
+        self.difference_checkbox.toggled.connect(self.mixPhoto)
+        self.difference_checkbox.move(1200, 110)
+        self.difference_checkbox.show()
+
+        self.multiply_checkbox = QCheckBox('Multiply', self)
+        self.multiply_checkbox.toggled.connect(self.mixPhoto)
+        self.multiply_checkbox.move(1200, 140)
+        self.multiply_checkbox.show()
 
     def brightFactorL(self):
         factor = 1 + (self.sender().value() * 0.1)
@@ -323,7 +331,8 @@ class App(QMainWindow):
                             new_colors = (int(min(colors1[0] + colors2[0] - 1, 255)), int(min(colors1[1] + colors2[1] - 1, 255)), int(min(colors1[2] + colors2[2] - 1, 255)), colors1[3])
                         case 'Difference':
                             new_colors = (int(min(abs(colors1[0] - colors2[0]), 255)), int(min(abs(colors1[1] - colors2[1]), 255)), int(min(abs(colors1[2] - colors2[2]), 255)), colors1[3])
-
+                        case 'Multiply':
+                            new_colors = (int(min(colors1[0] * colors2[0], 255)), int(min(colors1[1] * colors2[1], 255)), int(min(colors1[2] * colors2[2], 255)), colors1[3])
                 else:
                     new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
                 painter.setPen(QColor(*new_colors))
