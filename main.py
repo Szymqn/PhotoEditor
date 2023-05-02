@@ -35,6 +35,7 @@ class App(QMainWindow):
         self.multiply_checkbox = None
         self.screen_checkbox = None
         self.negation_checkbox = None
+        self.darken_checkbox = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -227,6 +228,11 @@ class App(QMainWindow):
         self.negation_checkbox.move(1200, 200)
         self.negation_checkbox.show()
 
+        self.darken_checkbox = QCheckBox('Darken', self)
+        self.darken_checkbox.toggled.connect(self.mixPhoto)
+        self.darken_checkbox.move(1200, 230)
+        self.darken_checkbox.show()
+
     def brightFactorL(self):
         factor = 1 + (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap1.size())
@@ -349,6 +355,8 @@ class App(QMainWindow):
                             new_colors = (int(255 - (255 - colors1[0]) * (255 - colors2[0])), int(255 - (255 - colors1[1]) * (255 - colors2[1])), int(255 - (255 - colors1[2]) * (255 - colors2[2])), colors1[3])
                         case 'Negation':
                             new_colors = (int(255 - abs(255 - colors1[0] - colors2[0])), int(255 - abs(255 - colors1[1] - colors2[1])), int(255 - abs(255 - colors1[2] - colors2[2])), colors1[3])
+                        case 'Darken':
+                            new_colors = (int(colors1[0] if colors1[0] < colors2[0] else colors2[0]), int(colors1[1] if colors1[1] < colors2[1] else colors2[1]), int(colors1[2] if colors1[2] < colors2[2] else colors2[2]), colors1[3])
                 else:
                     new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
                 painter.setPen(QColor(*new_colors))
