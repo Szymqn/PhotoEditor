@@ -1,9 +1,10 @@
+import math
 import sys
 
+from PyQt6.QtCore import pyqtSlot, Qt
+from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow, \
     QCheckBox
-from PyQt6.QtGui import QPixmap, QImage, QColor, QPainter
-from PyQt6.QtCore import pyqtSlot, Qt, QPoint, QSize
 
 
 class App(QMainWindow):
@@ -36,6 +37,11 @@ class App(QMainWindow):
         self.screen_checkbox = None
         self.negation_checkbox = None
         self.darken_checkbox = None
+        self.lighten_checkbox = None
+        self.exclusion_checkbox = None
+        self.overlay_checkbox = None
+        self.hard_light_checkbox = None
+        self.soft_light_checkbox = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -233,6 +239,31 @@ class App(QMainWindow):
         self.darken_checkbox.move(1200, 230)
         self.darken_checkbox.show()
 
+        self.lighten_checkbox = QCheckBox('Lighten', self)
+        self.lighten_checkbox.toggled.connect(self.mixPhoto)
+        self.lighten_checkbox.move(1200, 260)
+        self.lighten_checkbox.show()
+
+        self.exclusion_checkbox = QCheckBox('Exclusion', self)
+        self.exclusion_checkbox.toggled.connect(self.mixPhoto)
+        self.exclusion_checkbox.move(1200, 290)
+        self.exclusion_checkbox.show()
+
+        self.overlay_checkbox = QCheckBox('Overlay', self)
+        self.overlay_checkbox.toggled.connect(self.mixPhoto)
+        self.overlay_checkbox.move(1200, 320)
+        self.overlay_checkbox.show()
+
+        self.hard_light_checkbox = QCheckBox('Hard light', self)
+        self.hard_light_checkbox.toggled.connect(self.mixPhoto)
+        self.hard_light_checkbox.move(1200, 350)
+        self.hard_light_checkbox.show()
+
+        self.soft_light_checkbox = QCheckBox('Soft light', self)
+        self.soft_light_checkbox.toggled.connect(self.mixPhoto)
+        self.soft_light_checkbox.move(1200, 380)
+        self.soft_light_checkbox.show()
+
     def brightFactorL(self):
         factor = 1 + (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap1.size())
@@ -344,19 +375,77 @@ class App(QMainWindow):
                 if self.sender().isChecked():
                     match self.sender().text():
                         case 'Additive':
-                            new_colors = (int(min(colors1[0] + colors2[0], 255)), int(min(colors1[1] + colors2[1], 255)), int(min(colors1[2] + colors2[2], 255)), colors1[3])
+                            new_colors = (
+                                int(min(colors1[0] + colors2[0], 255)),
+                                int(min(colors1[1] + colors2[1], 255)),
+                                int(min(colors1[2] + colors2[2], 255)),
+                                colors1[3])
                         case 'Subtractive':
-                            new_colors = (int(min(colors1[0] + colors2[0] - 1, 255)), int(min(colors1[1] + colors2[1] - 1, 255)), int(min(colors1[2] + colors2[2] - 1, 255)), colors1[3])
+                            new_colors = (
+                                int(min(colors1[0] + colors2[0] - 1, 255)),
+                                int(min(colors1[1] + colors2[1] - 1, 255)),
+                                int(min(colors1[2] + colors2[2] - 1, 255)),
+                                colors1[3])
                         case 'Difference':
-                            new_colors = (int(min(abs(colors1[0] - colors2[0]), 255)), int(min(abs(colors1[1] - colors2[1]), 255)), int(min(abs(colors1[2] - colors2[2]), 255)), colors1[3])
+                            new_colors = (
+                                int(min(abs(colors1[0] - colors2[0]), 255)),
+                                int(min(abs(colors1[1] - colors2[1]), 255)),
+                                int(min(abs(colors1[2] - colors2[2]), 255)),
+                                colors1[3])
                         case 'Multiply':
-                            new_colors = (int(min(colors1[0] * colors2[0], 255)), int(min(colors1[1] * colors2[1], 255)), int(min(colors1[2] * colors2[2], 255)), colors1[3])
+                            new_colors = (
+                                int(min(colors1[0] * colors2[0], 255)),
+                                int(min(colors1[1] * colors2[1], 255)),
+                                int(min(colors1[2] * colors2[2], 255)),
+                                colors1[3])
                         case 'Screen':
-                            new_colors = (int(255 - (255 - colors1[0]) * (255 - colors2[0])), int(255 - (255 - colors1[1]) * (255 - colors2[1])), int(255 - (255 - colors1[2]) * (255 - colors2[2])), colors1[3])
+                            new_colors = (
+                                int(255 - (255 - colors1[0]) * (255 - colors2[0])),
+                                int(255 - (255 - colors1[1]) * (255 - colors2[1])),
+                                int(255 - (255 - colors1[2]) * (255 - colors2[2])),
+                                colors1[3])
                         case 'Negation':
-                            new_colors = (int(255 - abs(255 - colors1[0] - colors2[0])), int(255 - abs(255 - colors1[1] - colors2[1])), int(255 - abs(255 - colors1[2] - colors2[2])), colors1[3])
+                            new_colors = (
+                                int(255 - abs(255 - colors1[0] - colors2[0])),
+                                int(255 - abs(255 - colors1[1] - colors2[1])),
+                                int(255 - abs(255 - colors1[2] - colors2[2])),
+                                colors1[3])
                         case 'Darken':
-                            new_colors = (int(colors1[0] if colors1[0] < colors2[0] else colors2[0]), int(colors1[1] if colors1[1] < colors2[1] else colors2[1]), int(colors1[2] if colors1[2] < colors2[2] else colors2[2]), colors1[3])
+                            new_colors = (
+                                int(colors1[0] if colors1[0] < colors2[0] else colors2[0]),
+                                int(colors1[1] if colors1[1] < colors2[1] else colors2[1]),
+                                int(colors1[2] if colors1[2] < colors2[2] else colors2[2]),
+                                colors1[3])
+                        case 'Lighten':
+                            new_colors = (
+                                int(colors1[0] if colors1[0] > colors2[0] else colors2[0]),
+                                int(colors1[1] if colors1[1] > colors2[1] else colors2[1]),
+                                int(colors1[2] if colors1[2] > colors2[2] else colors2[2]),
+                                colors1[3])
+                        case 'Exclusion':
+                            new_colors = (
+                                int(colors1[0] + colors2[0] - (2 * colors1[0] * colors2[0] / 255)),
+                                int(colors1[1] + colors2[1] - (2 * colors1[1] * colors2[1] / 255)),
+                                int(colors1[2] + colors2[2] - (2 * colors1[2] * colors2[2] / 255)),
+                                colors1[3])
+                        case 'Overlay':
+                            new_colors = (
+                                int(2 * colors1[0] * colors2[0] / 255 if colors1[0] / 255 < 0.5 else 1 - 2 * (1 - colors1[0] / 255) * (1 - colors2[0] / 255) * 255),
+                                int(2 * colors1[1] * colors2[1] / 255 if colors1[1] / 255 < 0.5 else 1 - 2 * (1 - colors1[1] / 255) * (1 - colors2[1] / 255) * 255),
+                                int(2 * colors1[2] * colors2[2] / 255 if colors1[2] / 255 < 0.5 else 1 - 2 * (1 - colors1[2] / 255) * (1 - colors2[2] / 255) * 255),
+                                colors1[3])
+                        case 'Hard light':
+                            new_colors = (
+                                int(2 * colors1[0] * colors2[0] / 255 if colors2[0] / 255 < 0.5 else 1 - 2 * (1 - colors1[0] / 255) * (1 - colors2[0] / 255) * 255),
+                                int(2 * colors1[1] * colors2[1] / 255 if colors2[1] / 255 < 0.5 else 1 - 2 * (1 - colors1[1] / 255) * (1 - colors2[1] / 255) * 255),
+                                int(2 * colors1[2] * colors2[2] / 255 if colors2[2] / 255 < 0.5 else 1 - 2 * (1 - colors1[2] / 255) * (1 - colors2[2] / 255) * 255),
+                                colors1[3])
+                        case 'Soft light':
+                            new_colors = (
+                                int(2 * colors1[0] * colors2[0] / 255 + (colors1[0] ** 2) * (1 - 2 * colors2[0] / 255) / 255 if colors2[0] / 255 < 0.5 else math.sqrt(colors1[0] / 255) * (2 * colors2[0] / 255 - 1) + (2 * colors1[0] / 255) * (1 - colors2[0] / 255) * 255),
+                                int(2 * colors1[1] * colors2[1] / 255 + (colors1[1] ** 2) * (1 - 2 * colors2[1] / 255) / 255 if colors2[1] / 255 < 0.5 else math.sqrt(colors1[1] / 255) * (2 * colors2[1] / 255 - 1) + (2 * colors1[1] / 255) * (1 - colors2[1] / 255) * 255),
+                                int(2 * colors1[2] * colors2[2] / 255 + (colors1[2] ** 2) * (1 - 2 * colors2[2] / 255) / 255 if colors2[2] / 255 < 0.5 else math.sqrt(colors1[2] / 255) * (2 * colors2[2] / 255 - 1) + (2 * colors1[2] / 255) * (1 - colors2[2] / 255) * 255),
+                                colors1[3])
                 else:
                     new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
                 painter.setPen(QColor(*new_colors))
