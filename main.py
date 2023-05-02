@@ -33,6 +33,7 @@ class App(QMainWindow):
         self.subtractive_checkbox = None
         self.difference_checkbox = None
         self.multiply_checkbox = None
+        self.screen_checkbox = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -215,6 +216,11 @@ class App(QMainWindow):
         self.multiply_checkbox.move(1200, 140)
         self.multiply_checkbox.show()
 
+        self.screen_checkbox = QCheckBox('Screen', self)
+        self.screen_checkbox.toggled.connect(self.mixPhoto)
+        self.screen_checkbox.move(1200, 170)
+        self.screen_checkbox.show()
+
     def brightFactorL(self):
         factor = 1 + (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap1.size())
@@ -333,6 +339,8 @@ class App(QMainWindow):
                             new_colors = (int(min(abs(colors1[0] - colors2[0]), 255)), int(min(abs(colors1[1] - colors2[1]), 255)), int(min(abs(colors1[2] - colors2[2]), 255)), colors1[3])
                         case 'Multiply':
                             new_colors = (int(min(colors1[0] * colors2[0], 255)), int(min(colors1[1] * colors2[1], 255)), int(min(colors1[2] * colors2[2], 255)), colors1[3])
+                        case 'Screen':
+                            new_colors = (int(max(1 - (1 - colors1[0]) * (1 - colors2[0]), 0)), int(max(1 - (1 - colors1[1]) * (1 - colors2[1]), 0)), int(max(1 - (1 - colors1[2]) * (1 - colors2[2]), 0)), colors1[3])
                 else:
                     new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
                 painter.setPen(QColor(*new_colors))
