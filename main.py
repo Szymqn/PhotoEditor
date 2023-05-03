@@ -42,6 +42,9 @@ class App(QMainWindow):
         self.overlay_checkbox = None
         self.hard_light_checkbox = None
         self.soft_light_checkbox = None
+        self.color_dodge_checkbox = None
+        self.color_burn_checkbox = None
+        self.reflect_checkbox = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -264,6 +267,26 @@ class App(QMainWindow):
         self.soft_light_checkbox.move(1200, 380)
         self.soft_light_checkbox.show()
 
+        self.color_dodge_checkbox = QCheckBox('Color dodge', self)
+        self.color_dodge_checkbox.toggled.connect(self.mixPhoto)
+        self.color_dodge_checkbox.move(1200, 410)
+        self.color_dodge_checkbox.show()
+
+        self.color_burn_checkbox = QCheckBox('Color burn', self)
+        self.color_burn_checkbox.toggled.connect(self.mixPhoto)
+        self.color_burn_checkbox.move(1200, 440)
+        self.color_burn_checkbox.show()
+
+        self.reflect_checkbox = QCheckBox('Reflect', self)
+        self.reflect_checkbox.toggled.connect(self.mixPhoto)
+        self.reflect_checkbox.move(1200, 470)
+        self.reflect_checkbox.show()
+
+        self.reflect_checkbox = QCheckBox('Transparency', self)
+        self.reflect_checkbox.toggled.connect(self.mixPhoto)
+        self.reflect_checkbox.move(1200, 500)
+        self.reflect_checkbox.show()
+
     def brightFactorL(self):
         factor = 1 + (self.sender().value() * 0.1)
         new_pixmap = QPixmap(self.pixmap1.size())
@@ -446,6 +469,32 @@ class App(QMainWindow):
                                 int(2 * colors1[1] * colors2[1] / 255 + (colors1[1] ** 2) * (1 - 2 * colors2[1] / 255) / 255 if colors2[1] / 255 < 0.5 else math.sqrt(colors1[1] / 255) * (2 * colors2[1] / 255 - 1) + (2 * colors1[1] / 255) * (1 - colors2[1] / 255) * 255),
                                 int(2 * colors1[2] * colors2[2] / 255 + (colors1[2] ** 2) * (1 - 2 * colors2[2] / 255) / 255 if colors2[2] / 255 < 0.5 else math.sqrt(colors1[2] / 255) * (2 * colors2[2] / 255 - 1) + (2 * colors1[2] / 255) * (1 - colors2[2] / 255) * 255),
                                 colors1[3])
+                        case 'Color dodge':
+                            new_colors = (
+                                int(255 if colors1[0] == 255 else min((colors2[0] << 8) / (255 - colors1[0]), 255)),
+                                int(255 if colors1[1] == 255 else min((colors2[1] << 8) / (255 - colors1[1]), 255)),
+                                int(255 if colors1[2] == 255 else min((colors2[2] << 8) / (255 - colors1[2]), 255)),
+                                colors1[3])
+                        case 'Color burn':
+                            new_colors = (
+                                int(0 if colors1[0] == 0 else max(255 - int((255 - colors2[0]) << 8) / colors1[0], 0)),
+                                int(0 if colors1[1] == 0 else max(255 - int((255 - colors2[1]) << 8) / colors1[1], 0)),
+                                int(0 if colors1[2] == 0 else max(255 - int((255 - colors2[2]) << 8) / colors1[2], 0)),
+                                colors1[3])
+                        case 'Reflect':
+                            new_colors = (
+                                int(255 - abs(255 - colors1[0] - colors2[0])),
+                                int(255 - abs(255 - colors1[1] - colors2[1])),
+                                int(255 - abs(255 - colors1[2] - colors2[2])),
+                                colors1[3]
+                            )
+                        case 'Transparency':
+                            new_colors = (
+                                int(255 - abs(255 - colors1[0] - colors2[0])),
+                                int(255 - abs(255 - colors1[1] - colors2[1])),
+                                int(255 - abs(255 - colors1[2] - colors2[2])),
+                                int(0.5 * colors1[3] + 0.5 * colors2[3])
+                            )
                 else:
                     new_colors = (int(colors1[0]), int(colors1[1]), int(colors1[2]), colors1[3])
                 painter.setPen(QColor(*new_colors))
