@@ -48,14 +48,15 @@ class App(QMainWindow):
         self.reflect_checkbox = None
         self.contrast_slider = None
         self.histogram_button = None
+        self.roberts_h = None
+        self.roberts_v = None
+        self.prewitt_h = None
+        self.prewitt_v = None
+        self.sobel_h = None
+        self.sobel_v = None
+        self.laplace = None
         self.pixmap1 = None
         self.pixmap2 = None
-
-        layout = QVBoxLayout()
-
-        widget = QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
 
         self.initUI()
 
@@ -106,6 +107,7 @@ class App(QMainWindow):
             self.showNegative()
             self.showContrast()
             self.showHistogram()
+            self.showFilters()
 
     @pyqtSlot()
     def uploadSecond(self):
@@ -231,6 +233,46 @@ class App(QMainWindow):
         self.histogram_button.move(1200, 80)
         self.histogram_button.clicked.connect(lambda: funcs.generateHistogram(self))
         self.histogram_button.setVisible(True)
+
+    def showFilters(self):
+        filter_label = QLabel('Filters', self)
+        filter_label.show()
+        filter_label.setGeometry(1200, 120, 200, 30)
+
+        self.roberts_h = QCheckBox('Roberts H', self)
+        self.roberts_h.toggled.connect(lambda: funcs.filters(self))
+        self.roberts_h.move(1200, 150)
+        self.roberts_h.show()
+
+        self.roberts_v = QCheckBox('Roberts V', self)
+        self.roberts_v.toggled.connect(lambda: funcs.filters(self))
+        self.roberts_v.move(1200, 180)
+        self.roberts_v.show()
+
+        self.prewitt_h = QCheckBox('Prewitt H', self)
+        self.prewitt_h.toggled.connect(lambda: funcs.filters(self))
+        self.prewitt_h.move(1200, 210)
+        self.prewitt_h.show()
+
+        self.prewitt_v = QCheckBox('Prewitt V', self)
+        self.prewitt_v.toggled.connect(lambda: funcs.filters(self))
+        self.prewitt_v.move(1200, 240)
+        self.prewitt_v.show()
+
+        self.sobel_h = QCheckBox('Sobel H', self)
+        self.sobel_h.toggled.connect(lambda: funcs.filters(self))
+        self.sobel_h.move(1200, 270)
+        self.sobel_h.show()
+
+        self.sobel_v = QCheckBox('Sobel V', self)
+        self.sobel_v.toggled.connect(lambda: funcs.filters(self))
+        self.sobel_v.move(1200, 300)
+        self.sobel_v.show()
+
+        self.laplace = QCheckBox('Laplace', self)
+        self.laplace.toggled.connect(lambda: funcs.filters(self))
+        self.laplace.move(1200, 330)
+        self.laplace.show()
 
     def showMixed(self):
         self.additive_checkbox = QCheckBox('Additive', self)

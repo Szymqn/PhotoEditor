@@ -267,3 +267,54 @@ def generateHistogram(self):
     axs[1].hist(green, bins=256, color='g')
     axs[2].hist(blue, bins=256, color='b')
     plt.show()
+
+
+def filters(self):
+    new_pixmap = QPixmap(self.pixmap1.size())
+    painter = QPainter(new_pixmap)
+
+    mask = [[]]
+
+    match self.sender().text():
+        case 'Roberts H':
+            mask = [[0, 0, 0], [0, 1, -1], [0, 0, 0]]
+        case 'Roberts V':
+            mask = [[0, 0, 0], [0, 1, 0], [0, -1, 0]]
+        case 'Prewitt H':
+            mask = [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
+        case 'Prewitt V':
+            mask = [[1, 0, -1], [1, 0, -1], [1, 0, -1]]
+        case 'Sobel H':
+            mask = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
+        case 'Sobel V':
+            mask = [[1, 0, -1], [2, 0, -2], [1, 0, -1]]
+        case 'Laplace':
+            mask = [[0, -1, 0], [-1, 4, -1], [0, -1, 0]]
+
+    for i in range(1, self.photo_w - 1):
+        for j in range(1, self.photo_h - 1):
+            if self.sender().isChecked():
+                r = g = b = 0
+                for x in range(-1, 2):
+                    for y in range(-1, 2):
+                        c = self.pixmap1.toImage().pixel(i + x, j + y)
+                        colors = QColor(c).getRgb()
+                        r += colors[0] * mask[x+1][y+1]
+                        g += colors[0] * mask[x+1][y+1]
+                        b += colors[0] * mask[x+1][y+1]
+                painter.setPen(QColor(r, g, b))
+                painter.drawPoint(i, j)
+            else:
+                c = self.pixmap1.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                new_colors = (
+                    int(colors[0]),
+                    int(colors[1]),
+                    int(colors[2]),
+                    colors[3])
+
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+    painter.end()
+    self.mod_photo.setPixmap(new_pixmap)
