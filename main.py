@@ -147,7 +147,7 @@ class App(QMainWindow):
     def mixedLabels(self):
         mix_label = QLabel('Blending methods', self)
         mix_label.show()
-        mix_label.setGeometry(1700, 20, 200, 20)
+        mix_label.setGeometry(1500, 20, 200, 20)
 
     def showBrightness(self):
         # liner
@@ -301,82 +301,82 @@ class App(QMainWindow):
     def showMixed(self):
         self.additive_checkbox = QCheckBox('Additive', self)
         self.additive_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.additive_checkbox.move(1700, 50)
+        self.additive_checkbox.move(1500, 50)
         self.additive_checkbox.show()
 
         self.subtractive_checkbox = QCheckBox('Subtractive', self)
         self.subtractive_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.subtractive_checkbox.move(1700, 80)
+        self.subtractive_checkbox.move(1500, 80)
         self.subtractive_checkbox.show()
 
         self.difference_checkbox = QCheckBox('Difference', self)
         self.difference_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.difference_checkbox.move(1700, 110)
+        self.difference_checkbox.move(1500, 110)
         self.difference_checkbox.show()
 
         self.multiply_checkbox = QCheckBox('Multiply', self)
         self.multiply_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.multiply_checkbox.move(1700, 140)
+        self.multiply_checkbox.move(1500, 140)
         self.multiply_checkbox.show()
 
         self.screen_checkbox = QCheckBox('Screen', self)
         self.screen_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.screen_checkbox.move(1700, 170)
+        self.screen_checkbox.move(1500, 170)
         self.screen_checkbox.show()
 
         self.negation_checkbox = QCheckBox('Negation', self)
         self.negation_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.negation_checkbox.move(1700, 200)
+        self.negation_checkbox.move(1500, 200)
         self.negation_checkbox.show()
 
         self.darken_checkbox = QCheckBox('Darken', self)
         self.darken_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.darken_checkbox.move(1700, 230)
+        self.darken_checkbox.move(1500, 230)
         self.darken_checkbox.show()
 
         self.lighten_checkbox = QCheckBox('Lighten', self)
         self.lighten_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.lighten_checkbox.move(1700, 260)
+        self.lighten_checkbox.move(1500, 260)
         self.lighten_checkbox.show()
 
         self.exclusion_checkbox = QCheckBox('Exclusion', self)
         self.exclusion_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.exclusion_checkbox.move(1700, 290)
+        self.exclusion_checkbox.move(1500, 290)
         self.exclusion_checkbox.show()
 
         self.overlay_checkbox = QCheckBox('Overlay', self)
         self.overlay_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.overlay_checkbox.move(1700, 320)
+        self.overlay_checkbox.move(1500, 320)
         self.overlay_checkbox.show()
 
         self.hard_light_checkbox = QCheckBox('Hard light', self)
         self.hard_light_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.hard_light_checkbox.move(1700, 350)
+        self.hard_light_checkbox.move(1500, 350)
         self.hard_light_checkbox.show()
 
         self.soft_light_checkbox = QCheckBox('Soft light', self)
         self.soft_light_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.soft_light_checkbox.move(1700, 380)
+        self.soft_light_checkbox.move(1500, 380)
         self.soft_light_checkbox.show()
 
         self.color_dodge_checkbox = QCheckBox('Color dodge', self)
         self.color_dodge_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.color_dodge_checkbox.move(1700, 410)
+        self.color_dodge_checkbox.move(1500, 410)
         self.color_dodge_checkbox.show()
 
         self.color_burn_checkbox = QCheckBox('Color burn', self)
         self.color_burn_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.color_burn_checkbox.move(1700, 440)
+        self.color_burn_checkbox.move(1500, 440)
         self.color_burn_checkbox.show()
 
         self.reflect_checkbox = QCheckBox('Reflect', self)
         self.reflect_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.reflect_checkbox.move(1700, 470)
+        self.reflect_checkbox.move(1500, 470)
         self.reflect_checkbox.show()
 
         self.reflect_checkbox = QCheckBox('Transparency', self)
         self.reflect_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
-        self.reflect_checkbox.move(1700, 500)
+        self.reflect_checkbox.move(1500, 500)
         self.reflect_checkbox.show()
 
 
