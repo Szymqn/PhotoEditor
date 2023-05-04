@@ -1,12 +1,11 @@
 import math
 import sys
+import funcs
 
 from PyQt6.QtCore import pyqtSlot, Qt
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QFileDialog, QPushButton, QSlider, QVBoxLayout, QMainWindow, \
     QCheckBox
-
-from funcs import brightFactorL, brightFactorP, darkFactorL, darkFactorP, negative, mixPhoto
 
 
 class App(QMainWindow):
@@ -16,8 +15,8 @@ class App(QMainWindow):
         self.title = 'Photo Editor'
         self.left = 50
         self.top = 50
-        self.width = 1500
-        self.height = 960
+        self.width = 1920
+        self.height = 1080
 
         self.photo_w = 500
         self.photo_h = 400
@@ -47,6 +46,8 @@ class App(QMainWindow):
         self.color_dodge_checkbox = None
         self.color_burn_checkbox = None
         self.reflect_checkbox = None
+        self.contrast_slider = None
+        self.histogram_button = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -103,6 +104,8 @@ class App(QMainWindow):
             self.showBrightness()
             self.showDarkness()
             self.showNegative()
+            self.showContrast()
+            self.showHistogram()
 
     @pyqtSlot()
     def uploadSecond(self):
@@ -138,7 +141,7 @@ class App(QMainWindow):
     def mixedLabels(self):
         mix_label = QLabel('Blending methods', self)
         mix_label.show()
-        mix_label.setGeometry(1200, 20, 200, 20)
+        mix_label.setGeometry(1700, 20, 200, 20)
 
     def showBrightness(self):
         # liner
@@ -153,7 +156,7 @@ class App(QMainWindow):
         self.brightness_slider_l.setMaximum(5)
         self.brightness_slider_l.setTickPosition(QSlider.TickPosition.TicksBelow)
         self.brightness_slider_l.setTickInterval(1)
-        self.brightness_slider_l.valueChanged.connect(lambda: brightFactorL(self))
+        self.brightness_slider_l.valueChanged.connect(lambda: funcs.brightFactorL(self))
         self.brightness_slider_l.show()
 
         # power
@@ -168,7 +171,7 @@ class App(QMainWindow):
         self.brightness_slider_p.setMaximum(5)
         self.brightness_slider_p.setTickPosition(QSlider.TickPosition.TicksBelow)
         self.brightness_slider_p.setTickInterval(1)
-        self.brightness_slider_p.valueChanged.connect(lambda: brightFactorP(self))
+        self.brightness_slider_p.valueChanged.connect(lambda: funcs.brightFactorP(self))
         self.brightness_slider_p.show()
 
     def showDarkness(self):
@@ -184,7 +187,7 @@ class App(QMainWindow):
         self.darkness_slider_l.setMaximum(5)
         self.darkness_slider_l.setTickPosition(QSlider.TickPosition.TicksBelow)
         self.darkness_slider_l.setTickInterval(1)
-        self.darkness_slider_l.valueChanged.connect(lambda: darkFactorL(self))
+        self.darkness_slider_l.valueChanged.connect(lambda: funcs.darkFactorL(self))
         self.darkness_slider_l.show()
 
         # power
@@ -199,94 +202,115 @@ class App(QMainWindow):
         self.darkness_slider_p.setMaximum(5)
         self.darkness_slider_p.setTickPosition(QSlider.TickPosition.TicksBelow)
         self.darkness_slider_p.setTickInterval(1)
-        self.darkness_slider_p.valueChanged.connect(lambda: darkFactorP(self))
+        self.darkness_slider_p.valueChanged.connect(lambda: funcs.darkFactorP(self))
         self.darkness_slider_p.show()
 
     def showNegative(self):
         self.negative_checkbox = QCheckBox('Negative', self)
-        self.negative_checkbox.toggled.connect(lambda: negative(self))
+        self.negative_checkbox.toggled.connect(lambda: funcs.negative(self))
         self.negative_checkbox.move(630, 750)
         self.negative_checkbox.show()
 
+    def showContrast(self):
+        contrast_label = QLabel('Contrast factor', self)
+        contrast_label.show()
+        contrast_label.setGeometry(1200, 20, 200, 30)
+
+        self.contrast_slider = QSlider(Qt.Orientation.Horizontal, self)
+        self.contrast_slider.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.contrast_slider.setGeometry(1200, 50, 200, 30)
+        self.contrast_slider.setMinimum(-50)
+        self.contrast_slider.setMaximum(50)
+        self.contrast_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.contrast_slider.setTickInterval(50)
+        self.contrast_slider.valueChanged.connect(lambda: funcs.contrast(self))
+        self.contrast_slider.show()
+
+    def showHistogram(self):
+        self.histogram_button = QPushButton('Histogram', self)
+        self.histogram_button.move(1200, 80)
+        self.histogram_button.clicked.connect(lambda: funcs.generateHistogram(self))
+        self.histogram_button.setVisible(True)
+
     def showMixed(self):
         self.additive_checkbox = QCheckBox('Additive', self)
-        self.additive_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.additive_checkbox.move(1200, 50)
+        self.additive_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.additive_checkbox.move(1700, 50)
         self.additive_checkbox.show()
 
         self.subtractive_checkbox = QCheckBox('Subtractive', self)
-        self.subtractive_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.subtractive_checkbox.move(1200, 80)
+        self.subtractive_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.subtractive_checkbox.move(1700, 80)
         self.subtractive_checkbox.show()
 
         self.difference_checkbox = QCheckBox('Difference', self)
-        self.difference_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.difference_checkbox.move(1200, 110)
+        self.difference_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.difference_checkbox.move(1700, 110)
         self.difference_checkbox.show()
 
         self.multiply_checkbox = QCheckBox('Multiply', self)
-        self.multiply_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.multiply_checkbox.move(1200, 140)
+        self.multiply_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.multiply_checkbox.move(1700, 140)
         self.multiply_checkbox.show()
 
         self.screen_checkbox = QCheckBox('Screen', self)
-        self.screen_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.screen_checkbox.move(1200, 170)
+        self.screen_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.screen_checkbox.move(1700, 170)
         self.screen_checkbox.show()
 
         self.negation_checkbox = QCheckBox('Negation', self)
-        self.negation_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.negation_checkbox.move(1200, 200)
+        self.negation_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.negation_checkbox.move(1700, 200)
         self.negation_checkbox.show()
 
         self.darken_checkbox = QCheckBox('Darken', self)
-        self.darken_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.darken_checkbox.move(1200, 230)
+        self.darken_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.darken_checkbox.move(1700, 230)
         self.darken_checkbox.show()
 
         self.lighten_checkbox = QCheckBox('Lighten', self)
-        self.lighten_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.lighten_checkbox.move(1200, 260)
+        self.lighten_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.lighten_checkbox.move(1700, 260)
         self.lighten_checkbox.show()
 
         self.exclusion_checkbox = QCheckBox('Exclusion', self)
-        self.exclusion_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.exclusion_checkbox.move(1200, 290)
+        self.exclusion_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.exclusion_checkbox.move(1700, 290)
         self.exclusion_checkbox.show()
 
         self.overlay_checkbox = QCheckBox('Overlay', self)
-        self.overlay_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.overlay_checkbox.move(1200, 320)
+        self.overlay_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.overlay_checkbox.move(1700, 320)
         self.overlay_checkbox.show()
 
         self.hard_light_checkbox = QCheckBox('Hard light', self)
-        self.hard_light_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.hard_light_checkbox.move(1200, 350)
+        self.hard_light_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.hard_light_checkbox.move(1700, 350)
         self.hard_light_checkbox.show()
 
         self.soft_light_checkbox = QCheckBox('Soft light', self)
-        self.soft_light_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.soft_light_checkbox.move(1200, 380)
+        self.soft_light_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.soft_light_checkbox.move(1700, 380)
         self.soft_light_checkbox.show()
 
         self.color_dodge_checkbox = QCheckBox('Color dodge', self)
-        self.color_dodge_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.color_dodge_checkbox.move(1200, 410)
+        self.color_dodge_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.color_dodge_checkbox.move(1700, 410)
         self.color_dodge_checkbox.show()
 
         self.color_burn_checkbox = QCheckBox('Color burn', self)
-        self.color_burn_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.color_burn_checkbox.move(1200, 440)
+        self.color_burn_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.color_burn_checkbox.move(1700, 440)
         self.color_burn_checkbox.show()
 
         self.reflect_checkbox = QCheckBox('Reflect', self)
-        self.reflect_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.reflect_checkbox.move(1200, 470)
+        self.reflect_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.reflect_checkbox.move(1700, 470)
         self.reflect_checkbox.show()
 
         self.reflect_checkbox = QCheckBox('Transparency', self)
-        self.reflect_checkbox.toggled.connect(lambda: mixPhoto(self))
-        self.reflect_checkbox.move(1200, 500)
+        self.reflect_checkbox.toggled.connect(lambda: funcs.mixPhoto(self))
+        self.reflect_checkbox.move(1700, 500)
         self.reflect_checkbox.show()
 
 

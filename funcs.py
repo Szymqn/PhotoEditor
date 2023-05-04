@@ -1,3 +1,6 @@
+import numpy as np
+from matplotlib import pyplot as plt
+
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 
 
@@ -222,3 +225,45 @@ def mixPhoto(self):
 
     painter.end()
     self.mod_photo.setPixmap(new_pixmap)
+
+
+def contrast(self):
+    factor = self.sender().value()
+    new_pixmap = QPixmap(self.pixmap1.size())
+    painter = QPainter(new_pixmap)
+
+    for i in range(self.photo_w):
+        for j in range(self.photo_h):
+            c = self.pixmap1.toImage().pixel(i, j)
+            colors = QColor(c).getRgb()
+            new_colors = (
+                int(colors[0]),
+                int(colors[1]),
+                int(colors[2]),
+                int((127 / (127 - (factor * -1)) * (colors[3] - (factor * -1))) if factor > 0 else ((127 + factor) / 127) * (colors[3] - factor))
+            )
+            painter.setPen(QColor(*new_colors))
+            painter.drawPoint(i, j)
+
+    painter.end()
+    self.mod_photo.setPixmap(new_pixmap)
+
+
+def generateHistogram(self):
+    data = []
+
+    for i in range(self.photo_w):
+        for j in range(self.photo_h):
+            c = self.pixmap1.toImage().pixel(i, j)
+            colors = QColor(c).getRgb()
+            data.append(colors[:-1])
+
+    red = [idx[0] for idx in data]
+    green = [idx[1] for idx in data]
+    blue = [idx[2] for idx in data]
+
+    fig, axs = plt.subplots(1, 3, figsize=(15, 4), sharey=True)
+    axs[0].hist(red, bins=256, color='r')
+    axs[1].hist(green, bins=256, color='g')
+    axs[2].hist(blue, bins=256, color='b')
+    plt.show()
