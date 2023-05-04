@@ -55,6 +55,9 @@ class App(QMainWindow):
         self.sobel_h = None
         self.sobel_v = None
         self.laplace = None
+        self.s_min = None
+        self.s_max = None
+        self.s_median = None
         self.pixmap1 = None
         self.pixmap2 = None
 
@@ -108,6 +111,7 @@ class App(QMainWindow):
             self.showContrast()
             self.showHistogram()
             self.showFilters()
+            self.showSFilters()
 
     @pyqtSlot()
     def uploadSecond(self):
@@ -273,6 +277,26 @@ class App(QMainWindow):
         self.laplace.toggled.connect(lambda: funcs.filters(self))
         self.laplace.move(1200, 330)
         self.laplace.show()
+
+    def showSFilters(self):
+        s_filter_label = QLabel('Statistical Filters', self)
+        s_filter_label.show()
+        s_filter_label.setGeometry(1200, 360, 200, 30)
+
+        self.s_min = QCheckBox('Minimum', self)
+        self.s_min.toggled.connect(lambda: funcs.sFilters(self))
+        self.s_min.move(1200, 390)
+        self.s_min.show()
+
+        self.s_max = QCheckBox('Maximum', self)
+        self.s_max.toggled.connect(lambda: funcs.sFilters(self))
+        self.s_max.move(1200, 420)
+        self.s_max.show()
+
+        self.s_median = QCheckBox('Median', self)
+        self.s_median.toggled.connect(lambda: funcs.sFilters(self))
+        self.s_median.move(1200, 450)
+        self.s_median.show()
 
     def showMixed(self):
         self.additive_checkbox = QCheckBox('Additive', self)

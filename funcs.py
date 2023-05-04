@@ -318,3 +318,54 @@ def filters(self):
 
     painter.end()
     self.mod_photo.setPixmap(new_pixmap)
+
+
+def sFilters(self):
+    new_pixmap = QPixmap(self.pixmap1.size())
+    painter = QPainter(new_pixmap)
+
+    def median(lst):
+        sortedLst = sorted(lst)
+        lenLst = len(lst)
+        idx = (lenLst - 1) // 2
+
+        return sortedLst[idx] if lenLst % 2 else sortedLst[idx] + sortedLst[idx+1] / 2
+
+    for i in range(1, self.photo_w - 1):
+        for j in range(1, self.photo_h - 1):
+            if self.sender().isChecked():
+                result = []
+                r = g = b = []
+                for x in range(-1, 2):
+                    for y in range(-1, 2):
+                        c = self.pixmap1.toImage().pixel(i + x, j + y)
+                        colors = QColor(c).getRgb()
+
+                        r.append(colors[0])
+                        g.append(colors[1])
+                        b.append(colors[2])
+
+                match self.sender().text():
+                    case 'Minimum':
+                        result = [min(r), min(g), min(b)]
+                    case 'Maximum':
+                        result = [max(r), max(g), max(b)]
+                    case 'Median':
+                        result = [median(r), median(g), median(b)]
+
+                painter.setPen(QColor(result[0], result[1], result[2]))
+                painter.drawPoint(i, j)
+            else:
+                c = self.pixmap1.toImage().pixel(i, j)
+                colors = QColor(c).getRgb()
+                new_colors = (
+                    int(colors[0]),
+                    int(colors[1]),
+                    int(colors[2]),
+                    colors[3])
+
+                painter.setPen(QColor(*new_colors))
+                painter.drawPoint(i, j)
+
+    painter.end()
+    self.mod_photo.setPixmap(new_pixmap)
